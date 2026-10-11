@@ -18,7 +18,6 @@ public class EntityRegistry {
 	public static final DeferredObject<EntityType<TreeEntity>> TREE = ENTITIES.register("tree", () ->
 			EntityType.Builder.of(TreeEntity::new, MobCategory.MISC)
 					.sized(0.5f, 0.5f)
-					.noSave()
 					.fireImmune()
 					.noSummon()
 					.build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(FallingTrees.MOD_ID, "tree"))));
