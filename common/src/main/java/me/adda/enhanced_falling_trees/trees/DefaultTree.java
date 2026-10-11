@@ -60,15 +60,15 @@ public class DefaultTree implements TreeType {
 		if (entity == null ) return;
 
 		if (PlatformServices.getPlatform().isClient()) {
-			if (entity.tickCount == 1) {
+			if (entity.getAge() == 1) {
 				TreeEffects.playTreeFallSound(entity);
 			}
 
-			if (entity.tickCount == (int) (this.getFallAnimLength() * 20) - 5) {
+			if (entity.getAge() == (int) (this.getFallAnimLength() * 20) - 5) {
 				TreeEffects.playTreeImpactSound(entity);
 			}
 
-			if (entity.tickCount >= (int) (FallingTreesConfig.getCommonConfig().treeLifetimeLength * 20) - 1) {
+			if (entity.getAge() >= (int) (FallingTreesConfig.getCommonConfig().treeLifetimeLength * 20) - 1) {
 				handleParticles(entity);
 			}
 		}

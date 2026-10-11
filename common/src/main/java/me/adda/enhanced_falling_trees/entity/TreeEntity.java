@@ -6,6 +6,8 @@ import me.adda.enhanced_falling_trees.config.FallingTreesConfig;
 import me.adda.enhanced_falling_trees.registry.EntityRegistry;
 import me.adda.enhanced_falling_trees.registry.TreeTypeRegistry;
 import me.adda.enhanced_falling_trees.utils.BlockMapEntityData;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -47,6 +49,8 @@ public class TreeEntity extends Entity {
 	public static final EntityDataAccessor<ItemStack> USED_TOOL = SynchedEntityData.defineId(TreeEntity.class, EntityDataSerializers.ITEM_STACK);
 	public static final EntityDataAccessor<Direction> FALL_DIRECTION = SynchedEntityData.defineId(TreeEntity.class, EntityDataSerializers.DIRECTION);
 	public static final EntityDataAccessor<String> TREE_TYPE_LOCATION = SynchedEntityData.defineId(TreeEntity.class, EntityDataSerializers.STRING);
+	// Age the tree had when it was loaded from disk, so clients don't replay the fall
+	public static final EntityDataAccessor<Integer> START_AGE = SynchedEntityData.defineId(TreeEntity.class, EntityDataSerializers.INT);
 
 	public Entity owner = null;
 	public TreeType treeType = null;
@@ -130,16 +134,38 @@ public class TreeEntity extends Entity {
 		builder.define(USED_TOOL, ItemStack.EMPTY);
 		builder.define(FALL_DIRECTION, Direction.NORTH);
 		builder.define(TREE_TYPE_LOCATION, "");
+		builder.define(START_AGE, 0);
+	}
+
+	private record SavedBlock(BlockPos pos, BlockState state) {
+		static final Codec<SavedBlock> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				BlockPos.CODEC.fieldOf("pos").forGetter(SavedBlock::pos),
+				BlockState.CODEC.fieldOf("state").forGetter(SavedBlock::state)
+		).apply(instance, SavedBlock::new));
 	}
 
 	@Override
 	protected void readAdditionalSaveData(ValueInput input) {
-
+		Map<BlockPos, BlockState> blocks = new ConcurrentHashMap<>();
+		input.listOrEmpty("Blocks", SavedBlock.CODEC).forEach(block -> blocks.put(block.pos(), block.state()));
+		this.getEntityData().set(BLOCKS, blocks);
+		input.read("OriginPos", BlockPos.CODEC).ifPresent(pos -> this.getEntityData().set(ORIGIN_POS, pos));
+		input.read("FallDirection", Direction.CODEC).ifPresent(direction -> this.getEntityData().set(FALL_DIRECTION, direction));
+		input.read("UsedTool", ItemStack.OPTIONAL_CODEC).ifPresent(tool -> this.getEntityData().set(USED_TOOL, tool));
+		this.getEntityData().set(TREE_TYPE_LOCATION, input.getStringOr("TreeType", ""));
+		this.tickCount = input.getIntOr("TreeAge", 0);
+		this.getEntityData().set(START_AGE, this.tickCount);
 	}
 
 	@Override
 	protected void addAdditionalSaveData(ValueOutput output) {
-
+		ValueOutput.TypedOutputList<SavedBlock> blocks = output.list("Blocks", SavedBlock.CODEC);
+		this.getBlocks().forEach((pos, state) -> blocks.add(new SavedBlock(pos, state)));
+		output.store("OriginPos", BlockPos.CODEC, this.getOriginPos());
+		output.store("FallDirection", Direction.CODEC, this.getDirection());
+		output.store("UsedTool", ItemStack.OPTIONAL_CODEC, this.getUsedTool());
+		output.putString("TreeType", this.getEntityData().get(TREE_TYPE_LOCATION));
+		output.putInt("TreeAge", this.tickCount);
 	}
 
 	@Override
@@ -154,7 +180,14 @@ public class TreeEntity extends Entity {
 			this.setDeltaMovement(this.getDeltaMovement().multiply(1, -0.5, 1));
 		}
 
-		this.getTreeType().entityTick(this);
+		TreeType type = this.getTreeType();
+		if (type == null || this.getBlocks().isEmpty()) {
+			// Broken or empty tree data, nothing to fall
+			if (!this.level().isClientSide()) this.discard();
+			return;
+		}
+
+		type.entityTick(this);
 	}
 
 	public Map<BlockPos, BlockState> getBlocks() {
@@ -176,7 +209,16 @@ public class TreeEntity extends Entity {
 	}
 
 	public float getLifetime(float partialTick) {
-		return (this.tickCount + partialTick) / 20;
+		return (this.getAge() + partialTick) / 20;
+	}
+
+	/** Ticks since the tree was felled; on clients this includes the age it was loaded with. */
+	public int getAge() {
+		return this.level().isClientSide() ? this.tickCount + this.getStartAge() : this.tickCount;
+	}
+
+	public int getStartAge() {
+		return this.getEntityData().get(START_AGE);
 	}
 
 	public boolean isLarge() {
