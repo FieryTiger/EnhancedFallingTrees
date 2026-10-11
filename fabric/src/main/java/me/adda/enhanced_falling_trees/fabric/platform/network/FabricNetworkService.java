@@ -3,7 +3,6 @@ package me.adda.enhanced_falling_trees.fabric.platform.network;
 
 import me.adda.enhanced_falling_trees.api.platform.network.NetworkService;
 import me.adda.enhanced_falling_trees.api.platform.network.PacketContext;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
@@ -52,14 +51,8 @@ public class FabricNetworkService implements NetworkService {
         PENDING_S2C.put(id, handler);
     }
 
-    public static void initializeClientReceivers() {
-        PENDING_S2C.forEach((id, handler) -> {
-            CustomPacketPayload.Type<FallingTreesPayload> type = FallingTreesPayload.getType(id);
-            ClientPlayNetworking.registerGlobalReceiver(type, (payload, context) -> {
-                FabricPacketContext ctx = new FabricPacketContext(context.player(), context.responseSender());
-                handler.accept((FriendlyByteBuf) payload.data(), ctx);
-            });
-        });
+    static Map<Identifier, BiConsumer<FriendlyByteBuf, PacketContext>> pendingClientHandlers() {
+        return PENDING_S2C;
     }
 
     @Override
@@ -73,7 +66,7 @@ public class FabricNetworkService implements NetworkService {
     public void sendToServer(Identifier id, FriendlyByteBuf buf) {
         CustomPacketPayload.Type<FallingTreesPayload> type = FallingTreesPayload.getType(id);
         FallingTreesPayload payload = new FallingTreesPayload(id, buf.copy());
-        ClientPlayNetworking.send(payload);
+        FabricClientNetworking.send(payload);
     }
 
     @Override
