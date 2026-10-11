@@ -2,6 +2,7 @@ package me.adda.enhanced_falling_trees.config.common;
 
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -16,12 +17,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FilterConfig {
+	private static final TagKey<Item> PAXELS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("c", "tools/paxels"));
+
 	@ConfigEntry.Gui.CollapsibleObject
 	public FilterBlock log = new FilterBlock(List.of(BlockTags.LOGS), new ArrayList<>(), new ArrayList<>());
 	@ConfigEntry.Gui.CollapsibleObject
 	public FilterBlock leaves = new FilterBlock(List.of(BlockTags.LEAVES), new ArrayList<>(), new ArrayList<>());
 	@ConfigEntry.Gui.CollapsibleObject
-	public FilterItem tool = new FilterItem(List.of(ItemTags.AXES), new ArrayList<>(), new ArrayList<>());
+	public FilterItem tool = new FilterItem(List.of(ItemTags.AXES, PAXELS), new ArrayList<>(), new ArrayList<>());
 
 	public static class FilterBlock {
 		public List<String> whitelistedBlockTags;
