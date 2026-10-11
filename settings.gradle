@@ -1,8 +1,5 @@
 pluginManagement {
     repositories {
-        // TODO: mavenLocal() is here for a patched architectury-loom (fixes unobfuscated Forge on 26.x,
-        //  see https://github.com/architectury/architectury-loom/pull/349) - remove once that's merged and released.
-        mavenLocal()
         maven { url "https://maven.fabricmc.net/" }
         maven { url "https://maven.architectury.dev/" }
         maven { url "https://maven.minecraftforge.net/" }
