@@ -1,6 +1,6 @@
 package me.adda.enhanced_falling_trees.fabric;
 
-import me.adda.enhanced_falling_trees.fabric.platform.network.FabricNetworkService;
+import me.adda.enhanced_falling_trees.fabric.platform.network.FabricClientNetworking;
 import me.adda.enhanced_falling_trees.particles.LeavesParticles;
 import me.adda.enhanced_falling_trees.registry.ParticleRegistry;
 import net.fabricmc.api.ClientModInitializer;
@@ -13,6 +13,6 @@ public class FallingTreesClientFabric implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ParticleProviderRegistry.getInstance().register(ParticleRegistry.LEAVES.get(), LeavesParticles.Factory::new);
-        FabricNetworkService.initializeClientReceivers();
+        FabricClientNetworking.initializeClientReceivers();
     }
 }
