@@ -47,7 +47,7 @@ public class BambooTree implements TreeType {
 		if (entity == null) return;
 
 		if (PlatformServices.getPlatform().isClient()) {
-			if (entity.tickCount == 1) {
+			if (entity.getAge() == 1) {
 				if (FallingTreesConfig.getClientConfig().soundSettings.enabled) {
 					entity.level().playLocalSound(entity.getX(), entity.getY(), entity.getZ(),
 							SoundRegistry.BAMBOO_FALL.get(),
@@ -57,7 +57,7 @@ public class BambooTree implements TreeType {
 				}
 			}
 
-			if (entity.tickCount == (int) (this.getFallAnimLength() * 20) - 5) {
+			if (entity.getAge() == (int) (this.getFallAnimLength() * 20) - 5) {
 				SoundEvent sound = GroundUtils.willBeInLiquid(entity) ?
 						SoundEvents.GENERIC_SPLASH : SoundRegistry.BAMBOO_IMPACT.get();
 

@@ -6,12 +6,17 @@ import me.adda.enhanced_falling_trees.config.FallingTreesConfig;
 import me.adda.enhanced_falling_trees.registry.EntityRegistry;
 import me.adda.enhanced_falling_trees.registry.TreeTypeRegistry;
 import me.adda.enhanced_falling_trees.utils.BlockMapEntityData;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -43,6 +48,8 @@ public class TreeEntity extends Entity {
 	public static final EntityDataAccessor<ItemStack> USED_TOOL = SynchedEntityData.defineId(TreeEntity.class, EntityDataSerializers.ITEM_STACK);
 	public static final EntityDataAccessor<Direction> FALL_DIRECTION = SynchedEntityData.defineId(TreeEntity.class, EntityDataSerializers.DIRECTION);
 	public static final EntityDataAccessor<String> TREE_TYPE_LOCATION = SynchedEntityData.defineId(TreeEntity.class, EntityDataSerializers.STRING);
+	// Age the tree had when it was loaded from disk, so clients don't replay the fall
+	public static final EntityDataAccessor<Integer> START_AGE = SynchedEntityData.defineId(TreeEntity.class, EntityDataSerializers.INT);
 
 	public Entity owner = null;
 	public TreeType treeType = null;
@@ -122,17 +129,46 @@ public class TreeEntity extends Entity {
 		builder.define(USED_TOOL, ItemStack.EMPTY);
 		builder.define(FALL_DIRECTION, Direction.NORTH);
 		builder.define(TREE_TYPE_LOCATION, "");
+		builder.define(START_AGE, 0);
+	}
+
+	private record SavedBlock(BlockPos pos, BlockState state) {
+		static final Codec<SavedBlock> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				BlockPos.CODEC.fieldOf("pos").forGetter(SavedBlock::pos),
+				BlockState.CODEC.fieldOf("state").forGetter(SavedBlock::state)
+		).apply(instance, SavedBlock::new));
 	}
 
 	@Override
 	protected void readAdditionalSaveData(CompoundTag compound) {
-
+		RegistryOps<Tag> ops = this.registryAccess().createSerializationContext(NbtOps.INSTANCE);
+		Map<BlockPos, BlockState> blocks = new ConcurrentHashMap<>();
+		if (compound.contains("Blocks"))
+			SavedBlock.CODEC.listOf().parse(ops, compound.get("Blocks")).result()
+					.ifPresent(list -> list.forEach(block -> blocks.put(block.pos(), block.state())));
+		this.getEntityData().set(BLOCKS, blocks);
+		if (compound.contains("OriginPos"))
+			BlockPos.CODEC.parse(ops, compound.get("OriginPos")).result().ifPresent(pos -> this.getEntityData().set(ORIGIN_POS, pos));
+		if (compound.contains("FallDirection"))
+			Direction.CODEC.parse(ops, compound.get("FallDirection")).result().ifPresent(direction -> this.getEntityData().set(FALL_DIRECTION, direction));
+		if (compound.contains("UsedTool"))
+			ItemStack.OPTIONAL_CODEC.parse(ops, compound.get("UsedTool")).result().ifPresent(tool -> this.getEntityData().set(USED_TOOL, tool));
+		this.getEntityData().set(TREE_TYPE_LOCATION, compound.getString("TreeType"));
+		this.tickCount = compound.getInt("TreeAge");
+		this.getEntityData().set(START_AGE, this.tickCount);
 	}
 
 	@Override
 	protected void addAdditionalSaveData(CompoundTag compound) {
-
-	}
+		RegistryOps<Tag> ops = this.registryAccess().createSerializationContext(NbtOps.INSTANCE);
+		List<SavedBlock> blocks = new ArrayList<>();
+		this.getBlocks().forEach((pos, state) -> blocks.add(new SavedBlock(pos, state)));
+		SavedBlock.CODEC.listOf().encodeStart(ops, blocks).result().ifPresent(tag -> compound.put("Blocks", tag));
+		BlockPos.CODEC.encodeStart(ops, this.getOriginPos()).result().ifPresent(tag -> compound.put("OriginPos", tag));
+		Direction.CODEC.encodeStart(ops, this.getDirection()).result().ifPresent(tag -> compound.put("FallDirection", tag));
+		ItemStack.OPTIONAL_CODEC.encodeStart(ops, this.getUsedTool()).result().ifPresent(tag -> compound.put("UsedTool", tag));
+		compound.putString("TreeType", this.getEntityData().get(TREE_TYPE_LOCATION));
+		compound.putInt("TreeAge", this.tickCount);	}
 
 	@Override
 	public void tick() {
@@ -146,7 +182,14 @@ public class TreeEntity extends Entity {
 			this.setDeltaMovement(this.getDeltaMovement().multiply(1, -0.5, 1));
 		}
 
-		this.getTreeType().entityTick(this);
+		TreeType type = this.getTreeType();
+		if (type == null || this.getBlocks().isEmpty()) {
+			// Broken or empty tree data, nothing to fall
+			if (!this.level().isClientSide()) this.discard();
+			return;
+		}
+
+		type.entityTick(this);
 	}
 
 	public Map<BlockPos, BlockState> getBlocks() {
@@ -168,7 +211,16 @@ public class TreeEntity extends Entity {
 	}
 
 	public float getLifetime(float partialTick) {
-		return (this.tickCount + partialTick) / 20;
+		return (this.getAge() + partialTick) / 20;
+	}
+
+	/** Ticks since the tree was felled; on clients this includes the age it was loaded with. */
+	public int getAge() {
+		return this.level().isClientSide() ? this.tickCount + this.getStartAge() : this.tickCount;
+	}
+
+	public int getStartAge() {
+		return this.getEntityData().get(START_AGE);
 	}
 
 	public boolean isLarge() {
