@@ -20,12 +20,22 @@ public class FallingTreesConfig {
 
 		if (PlatformServices.getPlatform().isClient()) {
 			clientConfigHolder.registerSaveListener(this::saveConfig);
+			commonConfigHolder.registerSaveListener(this::saveCommonConfig);
 		}
 	}
 
 	private InteractionResult saveConfig(ConfigHolder<ClientConfig> configHolder, ClientConfig config) {
 		if (Minecraft.getInstance().level != null) {
 			ConfigPacket.sendToServer();
+		}
+
+		return InteractionResult.PASS;
+	}
+
+	private InteractionResult saveCommonConfig(ConfigHolder<CommonConfig> configHolder, CommonConfig config) {
+		// In singleplayer the copy synced from the integrated server would keep the old values until rejoining
+		if (Minecraft.getInstance().hasSingleplayerServer()) {
+			this.commonConfig = null;
 		}
 
 		return InteractionResult.PASS;
