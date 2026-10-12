@@ -104,5 +104,9 @@
   "text.autoconfig.efallingtrees_common.option.treeBreaking.axeSpeedMultiplier.@Tooltip": "(% от скорости инструмента)",
 
   "text.autoconfig.efallingtrees_common.option.treeBreaking.isLootDropOnSingleBlock": "Дроп на одном блоке",
-  "text.autoconfig.efallingtrees_common.option.treeBreaking.isLootDropOnSingleBlock.@Tooltip": "Включить дроп лута на одном блоке вместо распределения его вдоль ствола"
+  "text.autoconfig.efallingtrees_common.option.treeBreaking.isLootDropOnSingleBlock.@Tooltip": "Включить дроп лута на одном блоке вместо распределения его вдоль ствола",
+  "text.autoconfig.efallingtrees_common.option.filter.tool": "Инструмент",
+  "text.autoconfig.efallingtrees_common.option.filter.tool.whitelistedItemTags": "Разрешенные теги предметов",
+  "text.autoconfig.efallingtrees_common.option.filter.tool.whitelistedItems": "Разрешенные предметы",
+  "text.autoconfig.efallingtrees_common.option.filter.tool.blacklistedItems": "Запрещенные предметы"
 }

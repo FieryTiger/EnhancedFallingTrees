@@ -8,8 +8,6 @@ import me.adda.enhanced_falling_trees.entity.TreeEntity;
 import me.adda.enhanced_falling_trees.utils.GroundUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
@@ -54,7 +52,7 @@ public class DefaultTree implements TreeType {
 
 	@Override
 	public boolean allowedTool(ItemStack itemStack) {
-		return itemStack.getItem() instanceof AxeItem || itemStack.is(ItemTags.AXES);
+		return FallingTreesConfig.getCommonConfig().filter.tool.isValid(itemStack.getItem());
 	}
 
 	@Override

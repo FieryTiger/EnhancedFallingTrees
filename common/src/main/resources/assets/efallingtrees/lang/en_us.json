@@ -105,5 +105,9 @@
 	"text.autoconfig.efallingtrees_common.option.treeBreaking.axeSpeedMultiplier.@Tooltip": "(% of default tool speed)",
 
 	"text.autoconfig.efallingtrees_common.option.treeBreaking.isLootDropOnSingleBlock": "Drop on a single block",
-	"text.autoconfig.efallingtrees_common.option.treeBreaking.isLootDropOnSingleBlock.@Tooltip": "Drop all loot on a single block instead of spreading it along the trunk"
+	"text.autoconfig.efallingtrees_common.option.treeBreaking.isLootDropOnSingleBlock.@Tooltip": "Drop all loot on a single block instead of spreading it along the trunk",
+  "text.autoconfig.efallingtrees_common.option.filter.tool": "Tool",
+  "text.autoconfig.efallingtrees_common.option.filter.tool.whitelistedItemTags": "Whitelisted Item tags",
+  "text.autoconfig.efallingtrees_common.option.filter.tool.whitelistedItems": "Whitelisted Items",
+  "text.autoconfig.efallingtrees_common.option.filter.tool.blacklistedItems": "Blacklisted Items"
 }

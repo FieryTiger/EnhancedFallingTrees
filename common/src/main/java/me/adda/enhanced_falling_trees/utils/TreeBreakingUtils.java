@@ -8,7 +8,6 @@ import me.adda.enhanced_falling_trees.api.TreeType;
 import me.adda.enhanced_falling_trees.config.CommonConfig;
 import me.adda.enhanced_falling_trees.config.FallingTreesConfig;
 import net.minecraft.core.BlockPos;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -91,7 +90,7 @@ public class TreeBreakingUtils {
     }
 
     private static float getToolMultiplier(Player player, CommonConfig config) {
-        boolean isAxe = player.getMainHandItem().is(ItemTags.AXES);
+        boolean isAxe = config.filter.tool.isValid(player.getMainHandItem().getItem());
 
         return isAxe ?
                 config.treeBreaking.axeSpeedMultiplier / 100.0f :
