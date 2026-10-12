@@ -111,5 +111,12 @@
   "text.autoconfig.efallingtrees_common.option.filter.tool": "Tool",
   "text.autoconfig.efallingtrees_common.option.filter.tool.whitelistedItemTags": "Whitelisted Item tags",
   "text.autoconfig.efallingtrees_common.option.filter.tool.whitelistedItems": "Whitelisted Items",
-  "text.autoconfig.efallingtrees_common.option.filter.tool.blacklistedItems": "Blacklisted Items"
+  "text.autoconfig.efallingtrees_common.option.filter.tool.blacklistedItems": "Blacklisted Items",
+  "text.autoconfig.efallingtrees_common.category.physics": "Physics",
+  "text.autoconfig.efallingtrees_common.option.physics.treeDamage": "Falling trees hurt entities",
+  "text.autoconfig.efallingtrees_common.option.physics.damagePerBlock": "Damage per block of fall height",
+  "text.autoconfig.efallingtrees_common.option.physics.maxDamage": "Max damage",
+  "text.autoconfig.efallingtrees_common.option.physics.knockback": "Knockback strength",
+  "text.autoconfig.efallingtrees_common.option.physics.leavesPush": "Leaves push entities softly",
+  "text.autoconfig.efallingtrees_common.option.physics.solidTrunk": "Fallen trunk is solid"
 }
