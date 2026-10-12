@@ -31,6 +31,7 @@ final class TreeCollisions {
 	// Rotation per tick above which the tree counts as still falling
 	private static final float FALLING_ROTATION_STEP = 0.25f;
 	private static final double LEAVES_PUSH = 0.05;
+	private static final double LEAVES_BRUSH = 0.15;
 	private static final double TRUNK_PUSH = 0.15;
 
 	private record Part(BlockPos pos, Vec3 center, Vec3 velocity, boolean solid) {
@@ -90,11 +91,22 @@ final class TreeCollisions {
 					pushOut(entity, box, cube(solid.center()));
 				}
 			} else if (leaves != null && config.leavesPush) {
-				Vec3 away = entity.position().subtract(leaves.center()).multiply(1, 0, 1);
-				if (away.lengthSqr() > 1.0E-4) {
-					away = away.normalize().scale(LEAVES_PUSH * config.knockback);
-					entity.push(away.x, 0, away.z);
-					markMoved(entity);
+				if (falling) {
+					// A falling crown brushes past once instead of shoving every tick, so it doesn't sweep
+					// entities out from under the trunk
+					Vec3 along = leaves.velocity().multiply(1, 0, 1);
+					if (along.lengthSqr() > 1.0E-6 && tree.brushedEntities.add(entity.getUUID())) {
+						along = along.normalize().scale(LEAVES_BRUSH * config.knockback);
+						entity.push(along.x, 0, along.z);
+						markMoved(entity);
+					}
+				} else {
+					Vec3 away = entity.position().subtract(leaves.center()).multiply(1, 0, 1);
+					if (away.lengthSqr() > 1.0E-4) {
+						away = away.normalize().scale(LEAVES_PUSH * config.knockback);
+						entity.push(away.x, 0, away.z);
+						markMoved(entity);
+					}
 				}
 			}
 		}
