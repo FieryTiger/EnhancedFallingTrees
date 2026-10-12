@@ -68,6 +68,10 @@ public class TreeEntity extends Entity {
 	private boolean fallAngleStarted;
 	private boolean inLiquid;
 	private int pivotDistance = -1;
+	// Collision state, server side only
+	final Set<java.util.UUID> hitEntities = new java.util.HashSet<>();
+	final Map<BlockPos, Vec3> lastCenters = new java.util.HashMap<>();
+	float lastRotation;
 
 	public TreeEntity(EntityType<?> entityType, Level level) {
 		super(entityType, level);
@@ -204,6 +208,9 @@ public class TreeEntity extends Entity {
 		}
 
 		this.updateFallAngle(type);
+		if (!this.level().isClientSide()) {
+			TreeCollisions.tick(this, type);
+		}
 
 		type.entityTick(this);
 	}
