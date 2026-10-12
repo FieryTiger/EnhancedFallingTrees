@@ -70,6 +70,7 @@ public class TreeEntity extends Entity {
 	private int pivotDistance = -1;
 	// Collision state, server side only
 	final Set<java.util.UUID> hitEntities = new java.util.HashSet<>();
+	final Set<java.util.UUID> brushedEntities = new java.util.HashSet<>();
 	final Map<BlockPos, Vec3> lastCenters = new java.util.HashMap<>();
 	float lastRotation;
 
