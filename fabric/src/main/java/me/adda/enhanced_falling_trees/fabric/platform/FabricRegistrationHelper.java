@@ -3,12 +3,14 @@ package me.adda.enhanced_falling_trees.fabric.platform;
 
 import me.adda.enhanced_falling_trees.api.platform.registry.DeferredObject;
 import me.adda.enhanced_falling_trees.api.platform.RegistrationHelper;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricTrackedDataRegistry;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.core.RegistrationInfo;
 import net.minecraft.core.Registry;
 import net.minecraft.core.WritableRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -35,6 +37,11 @@ public class FabricRegistrationHelper implements RegistrationHelper {
             throw new IllegalStateException("Attempted duplicate registration of registry " + registryName);
 
         ((WritableRegistry) BuiltInRegistries.REGISTRY).register(registry.key(), registry, RegistrationInfo.BUILT_IN);
+    }
+
+    @Override
+    public void registerEntityDataSerializer(ResourceLocation id, EntityDataSerializer<?> serializer) {
+        FabricTrackedDataRegistry.register(id, serializer);
     }
 
     @Override
