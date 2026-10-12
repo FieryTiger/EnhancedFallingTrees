@@ -28,6 +28,7 @@ dependencies {
     modApi("me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config_version}")
     modApi("com.terraformersmc:modmenu:${rootProject.modmenu_version}")
 
+    modCompileOnly("maven.modrinth:treechop:YK5sxWxT") { transitive = false }
     modCompileOnly("maven.modrinth:jade:${rootProject.jade_version}+fabric-fabric,${rootProject.jade_minecraft_version}")
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }

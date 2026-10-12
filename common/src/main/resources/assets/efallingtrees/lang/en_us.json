@@ -94,6 +94,7 @@
 	"text.autoconfig.efallingtrees_common.option.features.disableBambooTrees": "Disable Bamboo trees",
 	"text.autoconfig.efallingtrees_common.option.features.disableChorusTrees": "Disable Chorus trees",
 	"text.autoconfig.efallingtrees_common.option.features.allowMixedTrees": "Fell mixed trees (different logs/leaves) as one tree",
+	"text.autoconfig.efallingtrees_common.option.features.treeChopCompat": "Play the fall animation for trees felled by TreeChop",
 
 	"text.autoconfig.efallingtrees_common.category.tree_breaking": "Tree Breaking",
 	"text.autoconfig.efallingtrees_common.option.treeBreaking.enableBreakingSpeedModification": "Enable Breaking Speed Modification",

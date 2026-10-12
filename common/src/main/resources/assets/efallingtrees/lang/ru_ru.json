@@ -93,6 +93,7 @@
   "text.autoconfig.efallingtrees_common.option.features.disableBambooTrees": "Отключить падение бамбука",
   "text.autoconfig.efallingtrees_common.option.features.disableChorusTrees": "Отключить падение хоруса",
   "text.autoconfig.efallingtrees_common.option.features.allowMixedTrees": "Рубить смешанные деревья (разные брёвна/листва) как одно",
+  "text.autoconfig.efallingtrees_common.option.features.treeChopCompat": "Анимация падения для деревьев, срубленных TreeChop",
 
   "text.autoconfig.efallingtrees_common.category.tree_breaking": "Ломание деревьев",
   "text.autoconfig.efallingtrees_common.option.treeBreaking.enableBreakingSpeedModification": "Включить изменение скорости ломания",

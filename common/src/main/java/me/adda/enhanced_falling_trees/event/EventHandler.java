@@ -8,6 +8,7 @@ import me.adda.enhanced_falling_trees.api.platform.event.EventResult;
 import me.adda.enhanced_falling_trees.api.platform.event.EventServices;
 import me.adda.enhanced_falling_trees.api.platform.event.IntValue;
 import me.adda.enhanced_falling_trees.client.render.TreeRenderer;
+import me.adda.enhanced_falling_trees.compat.TreeChop;
 import me.adda.enhanced_falling_trees.config.CommonConfig;
 import me.adda.enhanced_falling_trees.config.FallingTreesConfig;
 import me.adda.enhanced_falling_trees.entity.TreeEntity;
@@ -71,7 +72,9 @@ public class EventHandler {
 
 	public static boolean makeTreeFall(BlockPos blockPos, LevelAccessor level, Player player) {
 		Optional<TreeType> treeTypeOptional = TreeRegistry.getTreeType(level.getBlockState(blockPos));
-		return treeTypeOptional.filter(treeType -> makeTreeFall(treeType, blockPos, level, player)).isPresent();
+		return treeTypeOptional
+				.filter(treeType -> !(treeType instanceof DefaultTree && TreeChop.handlesChopping()))
+				.filter(treeType -> makeTreeFall(treeType, blockPos, level, player)).isPresent();
 	}
 
 	public static boolean makeTreeFall(TreeType treeType, BlockPos blockPos, LevelAccessor level, Player player) {

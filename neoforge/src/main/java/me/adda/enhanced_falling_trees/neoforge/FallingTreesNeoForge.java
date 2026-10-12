@@ -8,7 +8,9 @@ import me.adda.enhanced_falling_trees.neoforge.platform.network.NeoForgeNetworkS
 import me.adda.enhanced_falling_trees.registry.ParticleRegistry;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLEnvironment;
+import me.adda.enhanced_falling_trees.neoforge.compat.TreeChopNeoForge;
 
 @Mod(FallingTrees.MOD_ID)
 public class FallingTreesNeoForge {
@@ -20,6 +22,10 @@ public class FallingTreesNeoForge {
 
         ParticleRegistry.initialize();
         FallingTrees.init();
+
+        if (ModList.get().isLoaded("treechop")) {
+            TreeChopNeoForge.register();
+        }
 
         if (FMLEnvironment.dist.isClient()) {
             modEventBus.addListener(FallingTreesClientNeoForge::clientInit);

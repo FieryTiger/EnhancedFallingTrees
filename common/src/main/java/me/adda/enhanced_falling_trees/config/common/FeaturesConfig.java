@@ -5,4 +5,5 @@ public class FeaturesConfig {
 	public boolean disableBambooTrees = false;
 	public boolean disableChorusTrees = true;
 	public boolean allowMixedTrees = false;
+	public boolean treeChopCompat = true;
 }

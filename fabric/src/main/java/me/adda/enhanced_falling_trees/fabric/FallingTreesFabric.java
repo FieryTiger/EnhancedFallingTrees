@@ -4,7 +4,9 @@ import me.adda.enhanced_falling_trees.FallingTrees;
 import me.adda.enhanced_falling_trees.fabric.platform.network.FabricNetworkService;
 import me.adda.enhanced_falling_trees.fabric.platform.network.FallingTreesPayload;
 import me.adda.enhanced_falling_trees.registry.ParticleRegistry;
+import me.adda.enhanced_falling_trees.fabric.compat.TreeChopFabric;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.resources.ResourceLocation;
@@ -19,6 +21,10 @@ public class FallingTreesFabric implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTING.register(FabricNetworkService::setServer);
 
         FallingTrees.init();
+
+        if (FabricLoader.getInstance().isModLoaded("treechop")) {
+            TreeChopFabric.register();
+        }
     }
 
     private void registerPayloadTypes() {
