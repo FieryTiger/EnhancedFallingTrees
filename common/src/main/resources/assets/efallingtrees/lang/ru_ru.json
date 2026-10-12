@@ -110,5 +110,12 @@
   "text.autoconfig.efallingtrees_common.option.treeBreaking.axeSpeedMultiplier.@Tooltip": "(% от скорости инструмента)",
 
   "text.autoconfig.efallingtrees_common.option.treeBreaking.isLootDropOnSingleBlock": "Дроп на одном блоке",
-  "text.autoconfig.efallingtrees_common.option.treeBreaking.isLootDropOnSingleBlock.@Tooltip": "Включить дроп лута на одном блоке вместо распределения его вдоль ствола"
+  "text.autoconfig.efallingtrees_common.option.treeBreaking.isLootDropOnSingleBlock.@Tooltip": "Включить дроп лута на одном блоке вместо распределения его вдоль ствола",
+  "text.autoconfig.efallingtrees_common.category.physics": "Физика",
+  "text.autoconfig.efallingtrees_common.option.physics.treeDamage": "Падающие деревья наносят урон",
+  "text.autoconfig.efallingtrees_common.option.physics.damagePerBlock": "Урон за блок высоты падения",
+  "text.autoconfig.efallingtrees_common.option.physics.maxDamage": "Максимальный урон",
+  "text.autoconfig.efallingtrees_common.option.physics.knockback": "Сила отталкивания",
+  "text.autoconfig.efallingtrees_common.option.physics.leavesPush": "Листва мягко расталкивает",
+  "text.autoconfig.efallingtrees_common.option.physics.solidTrunk": "Упавший ствол твёрдый"
 }

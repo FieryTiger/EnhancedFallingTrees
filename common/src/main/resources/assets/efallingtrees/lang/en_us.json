@@ -111,5 +111,12 @@
 	"text.autoconfig.efallingtrees_common.option.treeBreaking.axeSpeedMultiplier.@Tooltip": "(% of default tool speed)",
 
 	"text.autoconfig.efallingtrees_common.option.treeBreaking.isLootDropOnSingleBlock": "Drop on a single block",
-	"text.autoconfig.efallingtrees_common.option.treeBreaking.isLootDropOnSingleBlock.@Tooltip": "Drop all loot on a single block instead of spreading it along the trunk"
+	"text.autoconfig.efallingtrees_common.option.treeBreaking.isLootDropOnSingleBlock.@Tooltip": "Drop all loot on a single block instead of spreading it along the trunk",
+  "text.autoconfig.efallingtrees_common.category.physics": "Physics",
+  "text.autoconfig.efallingtrees_common.option.physics.treeDamage": "Falling trees hurt entities",
+  "text.autoconfig.efallingtrees_common.option.physics.damagePerBlock": "Damage per block of fall height",
+  "text.autoconfig.efallingtrees_common.option.physics.maxDamage": "Max damage",
+  "text.autoconfig.efallingtrees_common.option.physics.knockback": "Knockback strength",
+  "text.autoconfig.efallingtrees_common.option.physics.leavesPush": "Leaves push entities softly",
+  "text.autoconfig.efallingtrees_common.option.physics.solidTrunk": "Fallen trunk is solid"
 }

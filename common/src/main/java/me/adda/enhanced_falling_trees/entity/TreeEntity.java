@@ -31,6 +31,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Math;
 
@@ -67,6 +68,10 @@ public class TreeEntity extends Entity {
 	private boolean fallAngleStarted;
 	private boolean inLiquid;
 	private int pivotDistance = -1;
+	// Collision state, server side only
+	final Set<java.util.UUID> hitEntities = new java.util.HashSet<>();
+	final Map<BlockPos, Vec3> lastCenters = new java.util.HashMap<>();
+	float lastRotation;
 
 	public TreeEntity(EntityType<?> entityType, Level level) {
 		super(entityType, level);
@@ -203,6 +208,9 @@ public class TreeEntity extends Entity {
 		}
 
 		this.updateFallAngle(type);
+		if (!this.level().isClientSide()) {
+			TreeCollisions.tick(this, type);
+		}
 
 		type.entityTick(this);
 	}
